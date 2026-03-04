@@ -18,9 +18,38 @@ document.addEventListener('DOMContentLoaded', () => {
     newChatButton = document.getElementById('newChatButton');
 
     setupEventListeners();
+    initTheme();
     createNewSession();
     loadCourseStats();
 });
+
+// Theme Management
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+    themeToggle.addEventListener('click', toggleTheme);
+    updateThemeLabel();
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    html.classList.add('theme-transitioning');
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeLabel();
+
+    setTimeout(() => html.classList.remove('theme-transitioning'), 300);
+}
+
+function updateThemeLabel() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    themeToggle.setAttribute('aria-label', current === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
 
 // Event Listeners
 function setupEventListeners() {
