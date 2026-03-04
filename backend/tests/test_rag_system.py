@@ -4,6 +4,7 @@ Tests for RAGSystem.query()
 All heavy dependencies (VectorStore, AIGenerator, SessionManager, etc.) are
 patched at the constructor level so no real I/O occurs.
 """
+
 import pytest
 from unittest.mock import MagicMock, patch
 
@@ -21,13 +22,15 @@ def rag_system():
     mock_sm = MagicMock()
     mock_sm.get_conversation_history.return_value = None
 
-    with patch("rag_system.DocumentProcessor"), \
-         patch("rag_system.VectorStore"), \
-         patch("rag_system.AIGenerator", return_value=mock_ag), \
-         patch("rag_system.SessionManager", return_value=mock_sm), \
-         patch("rag_system.ToolManager", return_value=mock_tm), \
-         patch("rag_system.CourseSearchTool"), \
-         patch("rag_system.CourseOutlineTool"):
+    with (
+        patch("rag_system.DocumentProcessor"),
+        patch("rag_system.VectorStore"),
+        patch("rag_system.AIGenerator", return_value=mock_ag),
+        patch("rag_system.SessionManager", return_value=mock_sm),
+        patch("rag_system.ToolManager", return_value=mock_tm),
+        patch("rag_system.CourseSearchTool"),
+        patch("rag_system.CourseOutlineTool"),
+    ):
 
         from rag_system import RAGSystem
 
@@ -46,6 +49,7 @@ def rag_system():
 
 # ── return type ───────────────────────────────────────────────────────────────
 
+
 def test_query_returns_tuple_of_str_and_list(rag_system):
     rag, mock_ag, mock_tm, mock_sm = rag_system
     result = rag.query("What is Python?")
@@ -62,6 +66,7 @@ def test_query_returns_ai_generator_response_as_answer(rag_system):
 
 
 # ── tool forwarding (core bug check) ─────────────────────────────────────────
+
 
 def test_query_passes_tool_definitions_to_generate_response(rag_system):
     """If tools are not forwarded, Claude never calls search — most likely root cause"""
@@ -88,6 +93,7 @@ def test_query_passes_tool_manager_instance_to_generate_response(rag_system):
 
 # ── sources ───────────────────────────────────────────────────────────────────
 
+
 def test_query_retrieves_sources_from_tool_manager(rag_system):
     rag, mock_ag, mock_tm, mock_sm = rag_system
     sources_data = [{"label": "Course - Lesson 1", "url": "http://example.com"}]
@@ -105,6 +111,7 @@ def test_query_calls_reset_sources_after_retrieval(rag_system):
 
 # ── session / history ─────────────────────────────────────────────────────────
 
+
 def test_query_with_session_id_fetches_conversation_history(rag_system):
     rag, mock_ag, mock_tm, mock_sm = rag_system
     rag.query("What is Python?", session_id="session-123")
@@ -121,7 +128,9 @@ def test_query_with_session_id_saves_exchange(rag_system):
     rag, mock_ag, mock_tm, mock_sm = rag_system
     mock_ag.generate_response.return_value = "My answer"
     rag.query("What is Python?", session_id="session-123")
-    mock_sm.add_exchange.assert_called_once_with("session-123", "What is Python?", "My answer")
+    mock_sm.add_exchange.assert_called_once_with(
+        "session-123", "What is Python?", "My answer"
+    )
 
 
 def test_query_passes_history_to_generate_response(rag_system):
@@ -135,6 +144,7 @@ def test_query_passes_history_to_generate_response(rag_system):
 
 
 # ── error propagation ─────────────────────────────────────────────────────────
+
 
 def test_query_exception_in_generate_response_propagates(rag_system):
     rag, mock_ag, mock_tm, mock_sm = rag_system

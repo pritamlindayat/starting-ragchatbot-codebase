@@ -4,6 +4,7 @@ Shared pytest fixtures for all backend tests.
 sys.path is managed by [tool.pytest.ini_options] pythonpath in pyproject.toml,
 which adds both backend/ and backend/tests/ before any test module is imported.
 """
+
 import pytest
 from unittest.mock import MagicMock
 

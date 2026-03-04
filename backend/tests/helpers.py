@@ -4,6 +4,7 @@ Shared helper functions for building mock Anthropic API responses.
 These are plain functions (not pytest fixtures) so they can be imported
 explicitly by any test module that needs them.
 """
+
 from unittest.mock import MagicMock
 
 
