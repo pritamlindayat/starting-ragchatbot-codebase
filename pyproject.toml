@@ -17,9 +17,11 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "httpx>=0.28.0",
 ]
 
 [tool.pytest.ini_options]
 # Make both backend/ and backend/tests/ importable without sys.path hacks
 pythonpath = ["backend", "backend/tests"]
 testpaths = ["backend/tests"]
+addopts = "-v --tb=short"
